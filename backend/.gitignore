@@ -1,0 +1,59 @@
+# --- Dependencies ---
+node_modules/
+jspm_packages/
+typings/
+
+# --- Environment / Secrets (CRITICAL) ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+.data/
+config/config.json
+# If using Better Auth / Clerk secrets
+.auth.env
+
+# --- Build / Output ---
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# --- Logs ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# --- Database / Storage ---
+# If you run a local DB (e.g., MongoDB/SQLite)
+*.db
+*.sqlite
+data/
+db/
+dump.rdb
+
+# --- Testing ---
+coverage/
+.nyc_output/
+.jest/
+
+# --- IDE / Editors ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+desktop.ini
