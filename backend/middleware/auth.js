@@ -1,66 +1,17 @@
-import { verifyToken } from "../utils/token.js";
-import User from "../models/User.js";
+import { verifyToken } from "../lib/jwt.js";
 
-export const protect = async (req, res, next) => {
+// Attach to any route that requires authentication.
+// Reads the httpOnly cookie, verifies it, populates req.user.
+export async function protect(req, res, next) {
   try {
-    let token;
-
-    // Get token from Authorization header
-    if (req.headers.authorization?.startsWith("Bearer")) {
-      token = req.headers.authorization.split(" ")[1];
-    }
-    // Or from cookie
-    else if (req.cookies?.token) {
-      token = req.cookies.token;
-    }
-
+    const token = req.cookies?.token;
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authorized to access this route",
-      });
+      return res.status(401).json({ message: "Not authenticated." });
     }
-
-    // Verify token
-    const decoded = await verifyToken(token);
-
-    // Check if user still exists
-    const user = await User.findById(decoded.sub).select("-password");
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User no longer exists",
-      });
-    }
-
-    // Check if password was changed after token was issued
-    if (user.changedPasswordAfter(decoded.iat)) {
-      return res.status(401).json({
-        success: false,
-        message: "Password recently changed. Please login again",
-      });
-    }
-
-    // Grant access
-    req.user = user;
+    const payload = await verifyToken(token);
+    req.user = payload; // { id, email, name, iat, exp }
     next();
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: error.message || "Not authorized",
-    });
+  } catch {
+    return res.status(401).json({ message: "Token invalid or expired." });
   }
-};
-
-// Restrict to certain roles
-export const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have permission to perform this action",
-      });
-    }
-    next();
-  };
-};
+}

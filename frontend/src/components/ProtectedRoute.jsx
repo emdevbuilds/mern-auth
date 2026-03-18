@@ -1,0 +1,12 @@
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+
+export function ProtectedRoute({ children }) {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/" replace />;
+}
+
+export function PublicRoute({ children }) {
+  const { user } = useAuth();
+  return !user ? children : <Navigate to="/dashboard" replace />;
+}
