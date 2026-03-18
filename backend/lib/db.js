@@ -6,11 +6,10 @@ export async function connectDB() {
     console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (err) {
     console.error(`MongoDB connection error: ${err.message}`);
-    process.exit(1); // crash the server — don't run without a DB
+    process.exit(1);
   }
 }
 
-// Gracefully close the connection when the process exits
 process.on("SIGINT", async () => {
   await mongoose.connection.close();
   console.log("MongoDB connection closed");
